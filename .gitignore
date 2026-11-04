@@ -1,5 +1,5 @@
 node_modules/
-.next/
+.next*/
 out/
 coverage/
 .env
@@ -10,3 +10,4 @@ __pycache__/
 .venv/
 venv/
 .DS_Store
+

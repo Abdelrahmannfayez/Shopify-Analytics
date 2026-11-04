@@ -9,6 +9,8 @@ npm install
 npm run dev
 ```
 
+The dashboard opens with sample analytics. To use the API sign-in screen, open `/login`; set `NEXT_PUBLIC_API_URL` in `.env.local` if the API is not at `http://localhost:8000`.
+
 ## Run the API
 
 1. Create the `master` database and tables with `backend/schema.sql`.

@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users_master (
   tenant_id VARCHAR(100) NOT NULL,
   role ENUM('admin', 'analyst', 'viewer') NOT NULL DEFAULT 'viewer',
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  token_version INT UNSIGNED NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_users_tenant (tenant_id)
 );
@@ -17,6 +18,10 @@ CREATE TABLE IF NOT EXISTS db_connection (
   tenant_id VARCHAR(100) NOT NULL UNIQUE,
   shop_domain VARCHAR(255) NOT NULL UNIQUE,
   shopify_access_token_enc TEXT NOT NULL,
-  connected_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  shopify_refresh_token_enc TEXT NULL,
+  access_token_expires_at DATETIME NULL,
+  refresh_token_expires_at DATETIME NULL,
+  scopes VARCHAR(1000) NOT NULL DEFAULT '',
+  connected_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_connection_tenant (tenant_id)
 );

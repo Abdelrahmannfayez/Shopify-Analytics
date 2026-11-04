@@ -1,0 +1,14 @@
+# Replace the client_id with the app's Shopify Dev Dashboard client ID before deployment.
+client_id = "REPLACE_WITH_SHOPIFY_CLIENT_ID"
+name = "Northstar Analytics"
+application_url = "https://your-app.example.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+
+[access_scopes]
+scopes = "read_reports,read_orders,read_products,read_inventory,read_customers"
+
+[auth]
+redirect_urls = ["https://your-app.example.com/auth/callback"]

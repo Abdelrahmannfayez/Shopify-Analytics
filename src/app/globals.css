@@ -112,7 +112,14 @@ button { cursor: pointer; }
   border-color: rgba(148, 190, 220, .14) !important;
   box-shadow: 14px 0 38px rgba(0, 0, 0, .22), inset -1px 0 rgba(255, 255, 255, .035);
 }
-.theme-dark aside nav a[aria-current="page"] { color: #8be5b8 !important; background-color: #1a2c3b !important; border-radius: 6px !important; border-inline-start: 3px solid #68dba7; }
+.theme-dark aside nav a[class*="hover:bg"] {
+  background-color: rgba(176, 205, 225, .045) !important;
+  border: 1px solid rgba(176, 205, 225, .09);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .045), 0 4px 14px rgba(0, 0, 0, .08);
+}
+.theme-dark aside nav a[aria-current="page"] { color: #8be5b8 !important; background-color: rgba(80, 180, 145, .13) !important; border-color: rgba(104, 219, 167, .24); border-radius: 6px !important; border-inline-start: 3px solid #68dba7; box-shadow: inset 0 1px rgba(255, 255, 255, .08), 0 5px 18px rgba(0, 0, 0, .13); }
 .theme-dark nav a[aria-current="page"] { color: #8be5b8 !important; background-color: transparent !important; border-radius: 4px !important; }
 .theme-dark [class*="bg-[#d9ded9]"] { background-color: #465866 !important; }
 .theme-dark [class*="bg-[#eaf5ee]"],

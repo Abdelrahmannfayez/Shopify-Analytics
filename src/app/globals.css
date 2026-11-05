@@ -104,6 +104,14 @@ button { cursor: pointer; }
 .theme-dark input,
 .theme-dark select,
 .theme-dark [class*="bg-white"] { background-color: #172635; }
+.theme-dark aside[class~="bg-white"] {
+  background-color: #0B1420 !important;
+  background-image: linear-gradient(145deg, rgba(255, 255, 255, .035), transparent 48%), radial-gradient(ellipse at 0% 0%, rgba(85, 149, 190, .09), transparent 54%);
+  -webkit-backdrop-filter: blur(22px) saturate(135%);
+  backdrop-filter: blur(22px) saturate(135%);
+  border-color: rgba(148, 190, 220, .14) !important;
+  box-shadow: 14px 0 38px rgba(0, 0, 0, .22), inset -1px 0 rgba(255, 255, 255, .035);
+}
 .theme-dark aside nav a[aria-current="page"] { color: #8be5b8 !important; background-color: #1a2c3b !important; border-radius: 6px !important; border-inline-start: 3px solid #68dba7; }
 .theme-dark nav a[aria-current="page"] { color: #8be5b8 !important; background-color: transparent !important; border-radius: 4px !important; }
 .theme-dark [class*="bg-[#d9ded9]"] { background-color: #465866 !important; }

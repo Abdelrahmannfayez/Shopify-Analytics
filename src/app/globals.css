@@ -103,8 +103,8 @@ button { cursor: pointer; }
 .theme-dark input,
 .theme-dark select,
 .theme-dark [class*="bg-white"] { background-color: #172635; }
-.theme-dark nav a[aria-current="page"],
-.theme-dark aside a[aria-current="page"] { color: #8be5b8 !important; background-color: #1b3a32 !important; }
+.theme-dark aside nav a[aria-current="page"] { color: #8be5b8 !important; background-color: #1a2c3b !important; border-radius: 6px !important; border-inline-start: 3px solid #68dba7; }
+.theme-dark nav a[aria-current="page"] { color: #8be5b8 !important; background-color: transparent !important; border-radius: 4px !important; }
 .theme-dark [class*="bg-[#d9ded9]"] { background-color: #465866 !important; }
 .theme-dark [class*="bg-[#eaf5ee]"],
 .theme-dark [class*="bg-[#edf5ef]"],

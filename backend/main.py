@@ -1,4 +1,5 @@
 import re
+import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Annotated, Literal
 from urllib.parse import urlparse
@@ -63,6 +64,13 @@ class StoreConnection(Base):
     refresh_token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     scopes: Mapped[str] = mapped_column(String(1000), default="")
     connected_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+
+class StoreAlertState(Base):
+    __tablename__ = "store_alert_states"
+    tenant_id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    alert_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    resolved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 
 class LoginRequest(BaseModel):
@@ -485,7 +493,9 @@ async def store_alerts(user: UserDep, db: Db):
     now = datetime.now(timezone.utc).isoformat()
     if previous > 0 and recent < previous * 0.9:
         change = round((recent / previous - 1) * 100, 1)
-        alerts.append({"id": "sales-down", "severity": "Warning", "title": "Sales are trending below the previous week", "detail": f"Revenue is down {abs(change)}% week over week.", "created_at": now})
+        title = "Sales are trending below the previous week"
+        alert_id = hashlib.sha256(f"{title}:{datetime.now(timezone.utc).date()}".encode()).hexdigest()[:24]
+        alerts.append({"id": alert_id, "severity": "Warning", "title": title, "detail": f"Revenue is down {abs(change)}% week over week.", "created_at": now})
     product_sales = {str(row.get("product_title", "")).casefold(): int(row.get("net_items_sold") or 0) for row in data.get("productSales", {}).get("tableData", {}).get("rows", [])}
     for product in data.get("products", {}).get("nodes", []):
         title = str(product.get("title", "Product"))
@@ -493,8 +503,24 @@ async def store_alerts(user: UserDep, db: Db):
         daily = max(product_sales.get(title.casefold(), 0) / 30, 0.05)
         days_left = stock / daily if stock else 0
         if days_left <= 7:
-            alerts.append({"id": f"stock-{abs(hash(title))}", "severity": "Critical" if days_left <= 3 else "Warning", "title": f"{title} is running low", "detail": f"About {round(days_left)} days of stock remain.", "created_at": now})
-    return {"alerts": alerts[:20]}
+            alert_title = f"{title} is running low"
+            alert_id = hashlib.sha256(f"{alert_title}:{datetime.now(timezone.utc).date()}".encode()).hexdigest()[:24]
+            alerts.append({"id": alert_id, "severity": "Critical" if days_left <= 3 else "Warning", "title": alert_title, "detail": f"About {round(days_left)} days of stock remain.", "created_at": now})
+    alerts = alerts[:20]
+    states = {state.alert_id for state in db.scalars(select(StoreAlertState).where(StoreAlertState.tenant_id == user.tenant_id, StoreAlertState.alert_id.in_([alert["id"] for alert in alerts]))).all()} if alerts else set()
+    return {"alerts": [{**alert, "resolved": alert["id"] in states} for alert in alerts]}
+
+
+@app.post("/analytics/alerts/{alert_id}/resolve")
+async def resolve_store_alert(alert_id: str, user: Annotated[User, Depends(require_roles("admin", "analyst"))], db: Db):
+    current_alerts = await store_alerts(user, db)
+    if not any(alert["id"] == alert_id for alert in current_alerts["alerts"]):
+        raise HTTPException(status_code=404, detail="This alert is no longer active")
+    state = db.get(StoreAlertState, (user.tenant_id, alert_id))
+    if state is None:
+        db.add(StoreAlertState(tenant_id=user.tenant_id, alert_id=alert_id))
+        db.commit()
+    return {"id": alert_id, "resolved": True}
 
 
 @app.get("/team/users", response_model=list[CurrentUser])

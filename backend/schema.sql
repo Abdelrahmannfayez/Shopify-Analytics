@@ -25,3 +25,10 @@ CREATE TABLE IF NOT EXISTS db_connection (
   connected_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_connection_tenant (tenant_id)
 );
+
+CREATE TABLE IF NOT EXISTS store_alert_states (
+  tenant_id VARCHAR(100) NOT NULL,
+  alert_id VARCHAR(64) NOT NULL,
+  resolved_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (tenant_id, alert_id)
+);

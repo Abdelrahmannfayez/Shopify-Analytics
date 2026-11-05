@@ -15,7 +15,7 @@ export type ProductSales = { title: string; revenue: number; units_sold: number;
 export type RecentOrder = { id: string; name: string; created_at: string; status: string; amount: number; currency: string };
 export type CustomerAnalytics = { currency: string; total_customers: number; segments: { champions: number; loyal: number; at_risk: number; lost: number }; repeat_purchase_rate: number | null; lifetime_value: number; cohort_mix: { cohort_month: string; segment: string; share: number }[] };
 export type SalesForecast = { currency: string; actual: { date: string; revenue: number }[]; forecast: { date: string; revenue: number; lower: number; upper: number }[]; expected_revenue_7d: number; expected_revenue_30d: number; method: string };
-export type StoreAlert = { id: string; severity: "Critical" | "Warning" | "Info"; title: string; detail: string; created_at: string };
+export type StoreAlert = { id: string; severity: "Critical" | "Warning" | "Info"; title: string; detail: string; created_at: string; resolved: boolean };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const TOKEN_KEY = "northstar_access_token";
@@ -75,6 +75,10 @@ export async function getSalesForecast(token: string): Promise<SalesForecast> {
 export async function getStoreAlerts(token: string): Promise<StoreAlert[]> {
   const data = await request<{ alerts: StoreAlert[] }>("/analytics/alerts", token);
   return data.alerts;
+}
+
+export function resolveStoreAlert(token: string, alertId: string): Promise<{ id: string; resolved: boolean }> {
+  return request(`/analytics/alerts/${encodeURIComponent(alertId)}/resolve`, token, { method: "POST" });
 }
 
 export async function getRecentOrders(token: string): Promise<RecentOrder[]> {

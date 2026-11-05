@@ -14,7 +14,7 @@ Set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_SHOPIFY_CLIENT_ID` in `.env.local`. T
 
 ## FastAPI and MySQL
 
-1. Create the `master` database and tables with `backend/schema.sql`. For an existing database created from the earlier schema, apply `backend/migrations/001_shopify_token_rotation.sql` once.
+1. Create the `master` database and tables with `backend/schema.sql`. For an existing database, apply pending migrations in order: `001_shopify_token_rotation.sql`, then `002_store_alert_states.sql`.
 2. Copy `backend/.env.example` to `backend/.env` and set the MySQL URL, a long random `JWT_SECRET`, Shopify app client ID and secret, and a Fernet `TOKEN_ENCRYPTION_KEY`.
 3. Generate a Fernet key with `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"` and put the result in the backend environment. Shopify access and refresh tokens are encrypted before storage.
 4. Install dependencies and provision the first tenant admin:
@@ -41,6 +41,7 @@ The configured scopes are `read_reports`, `read_orders`, `read_products`, `read_
 - `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`
 - `POST /shopify/token-exchange`, `GET /store/connection`
 - `GET /analytics/overview?days=7|30|90`, `GET /analytics/products`, `GET /analytics/orders`, `GET /analytics/customers`, `GET /analytics/forecast`, `GET /analytics/alerts`
+- `POST /analytics/alerts/{alert_id}/resolve` (admin or analyst)
 - `GET /team/users`, `POST /team/users` (admin only)
 
 Logout increments the account's token version, invalidating its outstanding JWT sessions. The UI uses sample data when no authenticated Shopify connection is available.

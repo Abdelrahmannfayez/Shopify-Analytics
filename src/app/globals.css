@@ -27,6 +27,7 @@ button { cursor: pointer; }
   background-color: rgba(14, 25, 37, .96) !important;
   border-color: #263849 !important;
 }
+.theme-dark aside { background-color: #0b1420 !important; }
 .theme-dark section {
   color: #eaf2f4;
   background-color: #142130 !important;
